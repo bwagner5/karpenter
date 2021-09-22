@@ -48,8 +48,9 @@ func NewController(kubeClient client.Client) *Controller {
 
 // Controller manages a set of properites on karpenter provisioned nodes, such as
 // taints, labels, finalizers.
-type Controller struct {
-	kubeClient client.Client
+type Controller struct 
+{
+	kubeClient     client.Client
 	readiness  *Readiness
 	liveness   *Liveness
 	emptiness  *Emptiness

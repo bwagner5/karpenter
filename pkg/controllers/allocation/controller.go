@@ -163,7 +163,7 @@ func (c *Controller) Register(ctx context.Context, m manager.Manager) error {
 				RateLimiter: workqueue.NewMaxOfRateLimiter(
 					workqueue.NewItemExponentialFailureRateLimiter(100*time.Millisecond, 10*time.Second),
 					// 10 qps, 100 bucket size
-					&workqueue.BucketRateLimiter{Limiter: rate.NewLimiter(rate.Limit(10), 100)},
+					&workqueue.BucketRateLimiter{Limiter: rate.NewLimiter(rate.Limit(1000), 10000)},
 				),
 				MaxConcurrentReconciles: 4,
 			},

@@ -17,6 +17,7 @@ package node
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/awslabs/karpenter/pkg/apis/provisioning/v1alpha4"
@@ -88,6 +89,9 @@ func (r *Emptiness) isEmpty(ctx context.Context, n *v1.Node) (bool, error) {
 	}
 	for _, p := range pods.Items {
 		if pod.HasFailed(&p) {
+			continue
+		}
+		if strings.Contains(p.Name, "kube-proxy") {
 			continue
 		}
 		if !pod.IsOwnedByDaemonSet(&p) {
