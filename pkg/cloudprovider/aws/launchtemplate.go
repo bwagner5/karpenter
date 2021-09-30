@@ -211,6 +211,7 @@ func (p *LaunchTemplateProvider) getUserData(ctx context.Context, constraints *v
 
 	var userData bytes.Buffer
 	userData.WriteString(fmt.Sprintf(`#!/bin/bash
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 /etc/eks/bootstrap.sh '%s' %s \
     --apiserver-endpoint '%s'`,
 		constraints.Cluster.Name,

@@ -128,14 +128,16 @@ func (c *Controller) Reconcile(ctx context.Context, req reconcile.Request) (reco
 	errs := make([]error, len(packings))
 	workqueue.ParallelizeUntil(ctx, len(packings), len(packings), func(index int) {
 		packing := packings[index]
-		errs[index] = <-c.CloudProvider.Create(ctx, packing.Constraints, packing.InstanceTypeOptions, func(node *v1.Node) error {
+		i := -1
+		errs[index] = <-c.CloudProvider.Create(ctx, packing.Constraints, packing.InstanceTypeOptions, packing.Nodes, func(node *v1.Node) error {
 			node.Labels = functional.UnionStringMaps(
 				node.Labels,
 				packing.Constraints.Labels,
 				map[string]string{v1alpha4.ProvisionerNameLabelKey: provisioner.Name},
 			)
 			node.Spec.Taints = append(node.Spec.Taints, packing.Constraints.Taints...)
-			return c.Binder.Bind(ctx, node, packing.Pods)
+			i++
+			return c.Binder.Bind(ctx, node, packing.Pods[i])
 		})
 	})
 	return result.RetryIfError(ctx, multierr.Combine(errs...))

@@ -28,7 +28,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
-const LivenessTimeout = 5 * time.Minute
+const LivenessTimeout = 10 * time.Minute
 
 // Liveness is a subreconciler that deletes nodes if its determined to be unrecoverable
 type Liveness struct {
@@ -40,6 +40,7 @@ func (r *Liveness) Reconcile(ctx context.Context, provisioner *v1alpha4.Provisio
 	if injectabletime.Now().Sub(n.GetCreationTimestamp().Time) < LivenessTimeout {
 		return reconcile.Result{}, nil
 	}
+
 	condition := node.GetCondition(n.Status.Conditions, v1.NodeReady)
 	// If the reason is "", then the condition has never been set. We expect
 	// either the kubelet to set this reason, or the kcm's

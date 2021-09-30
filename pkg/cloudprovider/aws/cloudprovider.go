@@ -31,6 +31,7 @@ import (
 	v1alpha1 "github.com/awslabs/karpenter/pkg/cloudprovider/aws/apis/v1alpha1"
 	"github.com/awslabs/karpenter/pkg/utils/parallel"
 	"github.com/awslabs/karpenter/pkg/utils/project"
+	"go.uber.org/multierr"
 	v1 "k8s.io/api/core/v1"
 	"knative.dev/pkg/apis"
 	"knative.dev/pkg/logging"
@@ -120,13 +121,13 @@ func withUserAgent(sess *session.Session) *session.Session {
 }
 
 // Create a node given the constraints.
-func (c *CloudProvider) Create(ctx context.Context, constraints *v1alpha4.Constraints, instanceTypes []cloudprovider.InstanceType, callback func(*v1.Node) error) chan error {
+func (c *CloudProvider) Create(ctx context.Context, constraints *v1alpha4.Constraints, instanceTypes []cloudprovider.InstanceType, quantity int, callback func(*v1.Node) error) chan error {
 	return c.creationQueue.Add(func() error {
-		return c.create(ctx, constraints, instanceTypes, callback)
+		return c.create(ctx, constraints, instanceTypes, quantity, callback)
 	})
 }
 
-func (c *CloudProvider) create(ctx context.Context, v1alpha4constraints *v1alpha4.Constraints, instanceTypes []cloudprovider.InstanceType, callback func(*v1.Node) error) error {
+func (c *CloudProvider) create(ctx context.Context, v1alpha4constraints *v1alpha4.Constraints, instanceTypes []cloudprovider.InstanceType, quantity int, callback func(*v1.Node) error) (errs error) {
 	constraints, err := v1alpha1.NewConstraints(v1alpha4constraints)
 	if err != nil {
 		return err
@@ -142,11 +143,16 @@ func (c *CloudProvider) create(ctx context.Context, v1alpha4constraints *v1alpha
 		return fmt.Errorf("getting launch template, %w", err)
 	}
 	// 3. Create instance
-	node, err := c.instanceProvider.Create(ctx, launchTemplate, instanceTypes, subnets, constraints.CapacityTypes)
+	nodes, err := c.instanceProvider.Create(ctx, launchTemplate, instanceTypes, subnets, constraints.CapacityTypes, quantity)
 	if err != nil {
-		return fmt.Errorf("launching instance, %w", err)
+		return fmt.Errorf("launching instances, %w", err)
 	}
-	return callback(node)
+	for _, node := range nodes {
+		if err := callback(node); err != nil {
+			errs = multierr.Append(errs, err)
+		}
+	}
+	return errs
 }
 
 func (c *CloudProvider) GetInstanceTypes(ctx context.Context) ([]cloudprovider.InstanceType, error) {

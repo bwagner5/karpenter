@@ -45,12 +45,22 @@ func (s *SubnetProvider) Get(ctx context.Context, constraints *v1alpha1.Constrai
 	if err != nil {
 		return nil, err
 	}
+
+	// Only pass back subnets with available IP addresses
+	availableSubnets := subnets[:0]
+	for _, subnet := range subnets {
+		if *subnet.AvailableIpAddressCount > 0 {
+			availableSubnets = append(availableSubnets, subnet)
+		}
+	}
+
 	// Fail if no subnets found
-	if len(subnets) == 0 {
+	if len(availableSubnets) == 0 {
 		return nil, fmt.Errorf("no subnets exist given constraints")
 	}
+
 	// Return subnets
-	return subnets, nil
+	return availableSubnets, nil
 }
 
 func (s *SubnetProvider) getFilters(ctx context.Context, constraints *v1alpha1.Constraints) []*ec2.Filter {
