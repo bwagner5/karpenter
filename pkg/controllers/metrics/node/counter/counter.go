@@ -24,7 +24,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	coreapi "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"knative.dev/pkg/logging"
 	crmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
 )
 
@@ -95,18 +94,12 @@ func UpdateCount(ctx context.Context, name types.NamespacedName, node *coreapi.N
 
 func handleCreatedNode(ctx context.Context, name types.NamespacedName, labels prometheus.Labels) {
 	prometheusLabelsFor[name] = labels
-
-	if err := incrementNodeCount(labels); err != nil {
-		logging.FromContext(ctx).Warnf("Failed to update count metric for new node [labels=%s]: error=%s", labels, err.Error())
-	}
+	incrementNodeCount(labels)
 }
 
 func handleDeletedNode(ctx context.Context, name types.NamespacedName, labels prometheus.Labels) {
 	delete(prometheusLabelsFor, name)
-
-	if err := decrementNodeCount(labels); err != nil {
-		logging.FromContext(ctx).Warnf("Failed to update count metric for deleted node [labels=%s]: error=%s", labels, err.Error())
-	}
+	decrementNodeCount(labels)
 }
 
 func handleUpdatedNode(ctx context.Context, name types.NamespacedName, currLabels prometheus.Labels, pastLabels prometheus.Labels) {
@@ -116,13 +109,8 @@ func handleUpdatedNode(ctx context.Context, name types.NamespacedName, currLabel
 	}
 
 	prometheusLabelsFor[name] = currLabels
-
-	if err := decrementNodeCount(pastLabels); err != nil {
-		logging.FromContext(ctx).Warnf("Failed to decrement previous count for updated node [labels=%s]: error=%s", pastLabels, err.Error())
-	}
-	if err := incrementNodeCount(currLabels); err != nil {
-		logging.FromContext(ctx).Warnf("Failed to increment current count for updated node [labels=%s]: error=%s", currLabels, err.Error())
-	}
+	decrementNodeCount(pastLabels)
+	incrementNodeCount(currLabels)
 }
 
 func getLabels(node *coreapi.Node) prometheus.Labels {
