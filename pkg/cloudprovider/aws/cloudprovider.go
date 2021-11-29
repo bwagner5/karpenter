@@ -50,7 +50,7 @@ const (
 	// resources. Cache hits enable faster provisioning and reduced API load on
 	// AWS APIs, which can have a serious impact on performance and scalability.
 	// DO NOT CHANGE THIS VALUE WITHOUT DUE CONSIDERATION
-	CacheTTL = 60 * time.Second
+	CacheTTL = 300 * time.Second
 	// CacheCleanupInterval triggers cache cleanup (lazy eviction) at this interval.
 	CacheCleanupInterval = 10 * time.Minute
 )

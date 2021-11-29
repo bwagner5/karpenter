@@ -29,10 +29,10 @@ import (
 )
 
 var (
-	MaxBatchDuration = time.Second * 10
-	MinBatchDuration = time.Second * 1
+	MaxBatchDuration = time.Second * 15
+	MinBatchDuration = time.Second * 3
 	// MaxPodsPerBatch limits the number of pods we process at one time to avoid using too much memory
-	MaxPodsPerBatch = 2_000
+	MaxPodsPerBatch = 10_000
 )
 
 // Provisioner waits for enqueued pods, batches them, creates capacity and binds the pods to the capacity.

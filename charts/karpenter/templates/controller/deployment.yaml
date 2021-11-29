@@ -34,11 +34,11 @@ spec:
           image: {{ .Values.controller.image }}
           resources:
             requests:
-              cpu: 1
-              memory: 1Gi
+              cpu: 2
+              memory: 8Gi
             limits:
-              cpu: 1
-              memory: 1Gi
+              cpu: 2
+              memory: 8Gi
           ports:
             - name: metrics
               containerPort: 8080
