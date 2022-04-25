@@ -52,7 +52,7 @@ type EC2Behavior struct {
 	CalledWithCreateLaunchTemplateInput set.Set
 	Instances                           sync.Map
 	LaunchTemplates                     sync.Map
-	InsufficientCapacityPools           []CapacityPool
+	InsufficientCapacityPools           set.Set
 }
 
 type EC2API struct {
@@ -71,7 +71,7 @@ func (e *EC2API) Reset() {
 		CalledWithCreateLaunchTemplateInput: set.NewSet(),
 		Instances:                           sync.Map{},
 		LaunchTemplates:                     sync.Map{},
-		InsufficientCapacityPools:           []CapacityPool{},
+		InsufficientCapacityPools:           set.NewSet(),
 	}
 }
 
@@ -90,17 +90,13 @@ func (e *EC2API) CreateFleetWithContext(_ context.Context, input *ec2.CreateFlee
 	}
 
 	for i := 0; i < int(*input.TargetCapacitySpecification.TotalTargetCapacity); i++ {
-		skipInstance := false
-		for _, pool := range e.InsufficientCapacityPools {
-			if pool.InstanceType == aws.StringValue(input.LaunchTemplateConfigs[0].Overrides[0].InstanceType) &&
-				pool.Zone == aws.StringValue(input.LaunchTemplateConfigs[0].Overrides[0].AvailabilityZone) &&
-				pool.CapacityType == aws.StringValue(input.TargetCapacitySpecification.DefaultTargetCapacityType) {
-				skippedPools = append(skippedPools, pool)
-				skipInstance = true
-				break
-			}
+		pool := CapacityPool{
+			CapacityType: aws.StringValue(input.TargetCapacitySpecification.DefaultTargetCapacityType),
+			InstanceType: aws.StringValue(input.LaunchTemplateConfigs[0].Overrides[0].InstanceType),
+			Zone:         aws.StringValue(input.LaunchTemplateConfigs[0].Overrides[0].AvailabilityZone),
 		}
-		if skipInstance {
+		if e.InsufficientCapacityPools.Contains(pool) {
+			skippedPools = append(skippedPools, pool)
 			continue
 		}
 		instances = append(instances, &ec2.Instance{
