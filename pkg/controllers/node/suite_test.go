@@ -119,6 +119,37 @@ var _ = Describe("Controller", func() {
 			n = ExpectNodeExists(ctx, env.Client, n.Name)
 			Expect(n.DeletionTimestamp.IsZero()).To(BeFalse())
 		})
+		It("should not delete nodes after expiry if not-ready taint is still applied", func() {
+			provisioner.Spec.TTLSecondsUntilExpired = ptr.Int64(30)
+			n := test.Node(test.NodeOptions{
+				ReadyStatus: v1.ConditionUnknown,
+				ObjectMeta: metav1.ObjectMeta{
+					Finalizers: []string{v1alpha5.TerminationFinalizer},
+					Labels: map[string]string{
+						v1alpha5.ProvisionerNameLabelKey: provisioner.Name,
+					},
+				},
+				Taints: []v1.Taint{
+					{Key: v1alpha5.NotReadyTaintKey, Effect: v1.TaintEffectNoSchedule},
+				},
+			})
+			ExpectApplied(ctx, env.Client, provisioner, n)
+
+			// Should still exist
+			ExpectReconcileSucceeded(ctx, controller, client.ObjectKeyFromObject(n))
+			n = ExpectNodeExists(ctx, env.Client, n.Name)
+			Expect(n.DeletionTimestamp.IsZero()).To(BeTrue())
+
+			// Simulate time passing
+			injectabletime.Now = func() time.Time {
+				return time.Now().Add(time.Duration(*provisioner.Spec.TTLSecondsUntilExpired) * time.Second)
+			}
+
+			// Should still exist
+			ExpectReconcileSucceeded(ctx, controller, client.ObjectKeyFromObject(n))
+			n = ExpectNodeExists(ctx, env.Client, n.Name)
+			Expect(n.DeletionTimestamp.IsZero()).To(BeTrue())
+		})
 	})
 
 	Context("Initialization", func() {

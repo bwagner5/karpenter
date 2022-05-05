@@ -36,8 +36,8 @@ type Expiration struct {
 
 // Reconcile reconciles the node
 func (r *Expiration) Reconcile(ctx context.Context, provisioner *v1alpha5.Provisioner, node *v1.Node) (reconcile.Result, error) {
-	// 1. Ignore node if not applicable
-	if provisioner.Spec.TTLSecondsUntilExpired == nil {
+	// 1. Ignore node if not applicable or node still has NotReady taint
+	if provisioner.Spec.TTLSecondsUntilExpired == nil || v1alpha5.Taints(node.Spec.Taints).HasKey(v1alpha5.NotReadyTaintKey) {
 		return reconcile.Result{}, nil
 	}
 	// 2. Trigger termination workflow if expired
