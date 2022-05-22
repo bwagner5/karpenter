@@ -22,7 +22,7 @@ serviceAccount:
   annotations: {}
 serviceMonitor:
   # -- Specifies whether a ServiceMonitor should be created.
-  enabled: false
+  enabled: true
   # -- Additional labels for the ServiceMonitor.
   additionalLabels: {}
   # -- Endpoint configuration for the ServiceMonitor.

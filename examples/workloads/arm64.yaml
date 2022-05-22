@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: arm64
+  name: inflate-arm64
 spec:
   replicas: 0
   selector:
     matchLabels:
-      app: arm64
+      app: inflate-arm64
   template:
     metadata:
       labels:
-        app: arm64
+        app: inflate-arm64
     spec:
       containers:
       - image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
-        name: arm64
+        name: inflate-arm64
         resources:
           requests:
             cpu: "1"

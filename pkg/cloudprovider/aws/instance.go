@@ -268,9 +268,9 @@ func (p *InstanceProvider) instanceToNode(ctx context.Context, instance *ec2.Ins
 				v1.ResourceCPU:              instanceType.Resources()[v1.ResourceCPU],
 				v1.ResourceMemory:           instanceType.Resources()[v1.ResourceMemory],
 				v1.ResourceEphemeralStorage: instanceType.Resources()[v1.ResourceEphemeralStorage],
-				v1alpha1.ResourceNVIDIAGPU:  instanceType.Resources()[v1alpha1.ResourceNVIDIAGPU],
-				v1alpha1.ResourceAMDGPU:     instanceType.Resources()[v1alpha1.ResourceAMDGPU],
-				v1alpha1.ResourceAWSNeuron:  instanceType.Resources()[v1alpha1.ResourceAWSNeuron],
+				// v1alpha1.ResourceNVIDIAGPU:  instanceType.Resources()[v1alpha1.ResourceNVIDIAGPU],
+				// v1alpha1.ResourceAMDGPU:     instanceType.Resources()[v1alpha1.ResourceAMDGPU],
+				// v1alpha1.ResourceAWSNeuron:  instanceType.Resources()[v1alpha1.ResourceAWSNeuron],
 			} {
 				if !quantity.IsZero() {
 					resources[resourceName] = quantity
