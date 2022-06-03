@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	"knative.dev/pkg/logging"
 
@@ -31,8 +30,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	crmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	"github.com/aws/karpenter/pkg/apis/provisioning/v1alpha5"
 )
 
 const (
@@ -64,13 +61,7 @@ func init() {
 
 func labelNames() []string {
 	return []string{
-		nodeName,
-		nodeProvisioner,
-		nodeZone,
-		nodeArchitecture,
-		nodeCapacityType,
 		nodeInstanceType,
-		nodePhase,
 	}
 }
 
@@ -125,7 +116,7 @@ func (c *Controller) cleanup(nodeNamespacedName types.NamespacedName) {
 
 func (c *Controller) record(ctx context.Context, node *v1.Node) error {
 	// Populate  metrics
-	if err := c.set(node); err != nil {
+	if err := c.set(ctx, node); err != nil {
 		logging.FromContext(ctx).Errorf("Failed to generate histogram: %s", err)
 	}
 	return nil
@@ -133,25 +124,11 @@ func (c *Controller) record(ctx context.Context, node *v1.Node) error {
 
 func (c *Controller) labels(node *v1.Node) prometheus.Labels {
 	metricLabels := prometheus.Labels{}
-	metricLabels[nodeName] = node.GetName()
-	if provisionerName, ok := node.Labels[v1alpha5.ProvisionerNameLabelKey]; !ok {
-		metricLabels[nodeProvisioner] = "N/A"
-	} else {
-		metricLabels[nodeProvisioner] = provisionerName
-	}
-	metricLabels[nodeZone] = node.Labels[v1.LabelTopologyZone]
-	metricLabels[nodeArchitecture] = node.Labels[v1.LabelArchStable]
-	if capacityType, ok := node.Labels[v1alpha5.LabelCapacityType]; !ok {
-		metricLabels[nodeCapacityType] = "N/A"
-	} else {
-		metricLabels[nodeCapacityType] = capacityType
-	}
 	metricLabels[nodeInstanceType] = node.Labels[v1.LabelInstanceTypeStable]
-	metricLabels[nodePhase] = string(node.Status.Phase)
 	return metricLabels
 }
 
-func (c *Controller) set(node *v1.Node) error {
+func (c *Controller) set(ctx context.Context, node *v1.Node) error {
 	labels := c.labels(node)
 	nodeNamespacedName := types.NamespacedName{Name: node.Name}
 	existingLabels, _ := c.labelCollection.LoadOrStore(nodeNamespacedName, []prometheus.Labels{})
@@ -165,7 +142,9 @@ func (c *Controller) set(node *v1.Node) error {
 	for _, cond := range node.Status.Conditions {
 		if cond.Reason == "KubeletReady" && cond.Status == v1.ConditionTrue {
 			// Record the duration between node resource creation and kubelet Ready
-			createdHistogram.Observe(time.Duration(cond.LastTransitionTime.UnixMilli() - node.CreationTimestamp.UnixMilli()).Seconds())
+			createdHistogram.Observe(cond.LastTransitionTime.Sub(node.CreationTimestamp.Time).Seconds())
+			logging.FromContext(ctx).Infof("NODE CAME UP AT: %v", node.CreationTimestamp)
+			logging.FromContext(ctx).Infof("NODE WENT READY AT: %v", cond.LastTransitionTime)
 		}
 	}
 	return nil
