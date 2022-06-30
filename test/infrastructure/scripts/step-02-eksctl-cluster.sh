@@ -31,3 +31,6 @@ managedNodeGroups:
 iam:
   withOIDC: true
 EOF
+
+
+kubectl apply -k ../host-cluster/flux-system/
