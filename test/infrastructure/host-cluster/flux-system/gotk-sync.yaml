@@ -17,7 +17,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./test/infastructure/host-cluster
+  path: ./test/infrastructure/host-cluster
   prune: true
   sourceRef:
     kind: GitRepository
