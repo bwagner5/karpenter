@@ -1,9 +1,18 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tekton-pipelines
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tekton-tests
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: Bucket
 metadata:
   name: tekton
-  namespace: flux-system
+  namespace: tekton-pipelines
 spec:
   bucketName: tekton-releases
   endpoint: storage.googleapis.com
@@ -21,7 +30,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: tekton-pipeline
-  namespace: flux-system
+  namespace: tekton-pipelines
 spec:
   interval: 2m0s
   path: ./pipeline/previous/v0.33.2
@@ -34,7 +43,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: tekton-triggers
-  namespace: flux-system
+  namespace: tekton-pipelines
 spec:
   interval: 2m0s
   path: ./triggers/previous/v0.19.0
@@ -47,7 +56,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: tekton-dashboard
-  namespace: flux-system
+  namespace: tekton-pipelines
 spec:
   interval: 2m0s
   path: ./dashboard/previous/v0.24.1

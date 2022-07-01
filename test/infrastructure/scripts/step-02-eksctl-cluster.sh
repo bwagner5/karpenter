@@ -30,7 +30,20 @@ managedNodeGroups:
         effect: NoSchedule
 iam:
   withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: aws-load-balancer-controller
+      namespace: kube-system
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+    roleName: eksctl-awslb-role
+addons:
+  - name: vpc-cni
+    version: 1.11.2
+  - name: aws-ebs-csi-driver
+  - name: kube-proxy
+  - name: coredns
 EOF
 
 
-kubectl apply -k ../host-cluster/flux-system/
+kubectl apply -k "${SCRIPTPATH}/../host-cluster/flux-system/"
