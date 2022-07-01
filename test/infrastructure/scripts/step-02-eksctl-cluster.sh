@@ -37,6 +37,21 @@ iam:
     wellKnownPolicies:
       awsLoadBalancerController: true
     roleName: eksctl-awslb-role
+  - metadata:
+      name: tekton
+      namespace: tekton-tests
+    roleName: tekton-pods
+    attachPolicy:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+      Resource: "*"
+      Action:
+        - ec2:*
+        - cloudformation:*
+        - iam:*
+        - ssm:GetParameter
+        - eks:*
 addons:
   - name: vpc-cni
     version: 1.11.2
@@ -45,5 +60,8 @@ addons:
   - name: coredns
 EOF
 
+eksctl create iamidentitymapping --cluster "${CLUSTER_NAME}" \
+  --arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tekton-pods" \
+  --group tekton \
+  --username 'system:node:{{EC2PrivateDNSName}}'
 
-kubectl apply -k "${SCRIPTPATH}/../host-cluster/flux-system/"
