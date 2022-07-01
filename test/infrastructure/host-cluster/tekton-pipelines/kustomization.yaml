@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
 - tekton.yaml
 - rbac.yaml
+patchesStrategicMerge:
+- tekton-tolerations.yaml

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-dashboard
+  namespace: tekton-pipelines
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-pipelines-controller
+  namespace: tekton-pipelines
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-pipelines-webhook
+  namespace: tekton-pipelines
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: source-controller
+  namespace: tekton-triggers-controller
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: source-controller
+  namespace: tekton-triggers-webhook
+spec:
+  template:
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists

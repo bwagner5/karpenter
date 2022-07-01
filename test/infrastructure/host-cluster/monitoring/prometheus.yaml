@@ -30,24 +30,31 @@ spec:
   values:
     coreDns:
       enabled: false
-      kubeProxy:
-        enabled: false
-      kubeEtcd:
-        enabled: false
-      alertmanager:
-        enabled: false
-      kubeScheduler: 
-        enabled: false
-      kubeApiServer:
-        enabled: false
-      kubeStateMetrics:
-        enabled: false
-      kubeControllerManager:
-        enabled: false
-      prometheus:
-        serviceMonitor:
-          selfMonitor: false
-      prometheusOperator:
-        serviceMonitor:
-          selfMonitor: false
+    kubeProxy:
+       enabled: false
+    kubeEtcd:
+      enabled: false
+    alertmanager:
+      enabled: false
+    kubeScheduler: 
+      enabled: false
+    kubeApiServer:
+      enabled: false
+    kubeStateMetrics:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    prometheus:
+      prometheusSpec:
+        tolerations:
+          - key: CriticalAddonsOnly
+            operator: Exists
+      serviceMonitor:
+        selfMonitor: false
+    prometheusOperator:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+      serviceMonitor:
+        selfMonitor: false
     

@@ -34,3 +34,6 @@ spec:
     serviceAccount:
       name: aws-load-balancer-controller
       create: false
+    tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
