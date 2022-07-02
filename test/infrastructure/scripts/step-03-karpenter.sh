@@ -17,20 +17,24 @@ eksctl create iamserviceaccount \
   --role-only \
   --approve
 
-export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-karpenter"
+export CLUSTER_ENDPOINT=$(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.endpoint" --output json)
 
-aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
-
-if [ -z "$(helm repo list | grep karpenter)" ]; then
-  helm repo add karpenter https://charts.karpenter.sh
-fi
-helm repo update
-helm upgrade --install --namespace karpenter --create-namespace karpenter --version v0.9.0 \
-  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-karpenter" \
-  --set clusterName=${CLUSTER_NAME} \
-  --set clusterEndpoint=$(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.endpoint" --output json) \
-  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${CLUSTER_NAME} \
-  --set tolerations[0].key="CriticalAddonsOnly" \
-  --set tolerations[0].operator="Exists" \
-  karpenter/karpenter \
-  --wait
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: karpenter-helm-values
+  namespace: karpenter
+data:
+  values.yaml: |-
+    clusterName: ${CLUSTER_NAME}
+    clusterEndpoint: ${CLUSTER_ENDPOINT}
+    serviceAccount:
+        annotations:
+            eks.amazonaws.com/role-arn: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${CLUSTER_NAME}-karpenter
+    aws:
+        defaultInstanceProfile: KarpenterNodeInstanceProfile-${CLUSTER_NAME}
+    tolerations: 
+    - key: CriticalAddonsOnly
+      operator: Exists
+EOF

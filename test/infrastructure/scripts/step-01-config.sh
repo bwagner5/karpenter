@@ -1,4 +1,4 @@
-export CLUSTER_NAME="${CLUSTER_NAME:-karpenter-test-infrastructure}"
+export CLUSTER_NAME="${CLUSTER_NAME:-karpenter-test-cluster}"
 export AWS_PROFILE="${AWS_PROFILE:-karpenter-ci}"
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export AWS_REGION="${AWS_REGION:-us-west-2}"

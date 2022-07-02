@@ -15,5 +15,5 @@ eksctl create iamserviceaccount \
   --override-existing-serviceaccounts \
   --region=${AWS_REGION}
 
-helm repo add kit https://awslabs.github.io/kubernetes-iteration-toolkit/
-helm upgrade --install kit-operator kit/kit-operator --namespace kit --create-namespace --set serviceAccount.create=false
+# helm repo add kit https://awslabs.github.io/kubernetes-iteration-toolkit/
+# helm upgrade --install kit-operator kit/kit-operator --namespace kit --create-namespace --set serviceAccount.create=false

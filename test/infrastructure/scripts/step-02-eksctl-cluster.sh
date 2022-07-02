@@ -60,8 +60,11 @@ addons:
   - name: coredns
 EOF
 
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
+
 eksctl create iamidentitymapping --cluster "${CLUSTER_NAME}" \
   --arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tekton-pods" \
   --group tekton \
   --username 'system:node:{{EC2PrivateDNSName}}'
+
 
