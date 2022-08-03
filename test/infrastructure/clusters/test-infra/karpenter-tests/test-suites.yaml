@@ -5,11 +5,11 @@ metadata:
   namespace: karpenter-tests
 spec:
   limits:
-    defaultRequest:
+    - defaultRequest:
       cpu: 250m
       memory: 256Mi
-    min:
-      cpu: 250m
+      min:
+        cpu: 250m
     type: Container
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
