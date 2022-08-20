@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net"
 	"strings"
 	"time"
 
@@ -150,6 +151,14 @@ func (env *Environment) GetNode(nodeName string) v1.Node {
 	var node v1.Node
 	ExpectWithOffset(1, env.Client.Get(env.Context, types.NamespacedName{Name: nodeName}, &node)).To(Succeed())
 	return node
+}
+
+func (env *Environment) ExpectIPv6ClusterDNS() string {
+	dnsService, err := env.KubeClient.CoreV1().Services("kube-system").Get(env.Context, "kube-dns", metav1.GetOptions{})
+	Expect(err).ToNot(HaveOccurred())
+	kubeDNSIP := net.ParseIP(dnsService.Spec.ClusterIP)
+	Expect(kubeDNSIP.To4()).To(BeNil())
+	return kubeDNSIP.String()
 }
 
 func (env *Environment) ExpectInstance(nodeName string) Assertion {

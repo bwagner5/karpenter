@@ -16,6 +16,7 @@ package amifamily
 
 import (
 	"context"
+	"net"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
@@ -58,6 +59,7 @@ type Options struct {
 	SecurityGroupsIDs []string
 	Tags              map[string]string
 	Labels            map[string]string `hash:"ignore"`
+	IPv6DNS           net.IP
 }
 
 // LaunchTemplate holds the dynamically generated launch template parameters
@@ -166,10 +168,14 @@ func GetAMIFamily(amiFamily *string, options *Options) AMIFamily {
 	}
 }
 
-func (Options) DefaultMetadataOptions() *v1alpha1.MetadataOptions {
+func (o Options) DefaultMetadataOptions() *v1alpha1.MetadataOptions {
+	ipv6 := ec2.LaunchTemplateInstanceMetadataProtocolIpv6Disabled
+	if o.IPv6DNS != nil {
+		ipv6 = ec2.LaunchTemplateInstanceMetadataProtocolIpv6Enabled
+	}
 	return &v1alpha1.MetadataOptions{
 		HTTPEndpoint:            aws.String(ec2.LaunchTemplateInstanceMetadataEndpointStateEnabled),
-		HTTPProtocolIPv6:        aws.String(ec2.LaunchTemplateInstanceMetadataProtocolIpv6Disabled),
+		HTTPProtocolIPv6:        aws.String(ipv6),
 		HTTPPutResponseHopLimit: aws.Int64(2),
 		HTTPTokens:              aws.String(ec2.LaunchTemplateHttpTokensStateRequired),
 	}
