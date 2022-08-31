@@ -10,8 +10,8 @@ metadata:
   namespace: git-stats-exporter
 spec:
   interval: 2m0s
-    ref:
-      branch: main
+  ref:
+    branch: main
   url: https://github.com/bwagner5/git-stats-exporter
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
