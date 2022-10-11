@@ -29,6 +29,7 @@ jobs:
         key: ${{ runner.os }}-go-cache-${{ hashFiles('**/go.sum') }}
     - name: CI - Verifications and Tests
       run: |
+        export PR_TITLE=${{ github.event.pull_request.title }}
         make ci
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
