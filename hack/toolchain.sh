@@ -10,16 +10,16 @@ main() {
 }
 
 tools() {
-    go install github.com/google/go-licenses@v1.2.0
-    go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
+    go install github.com/google/go-licenses@v1.4.0
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.0
     go install github.com/google/ko@v0.11.2
-    go install github.com/mikefarah/yq/v4@v4.24.5
-    go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.8.1
-    go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.0.0-20220421205612-c162794a9b12
-    go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0
-    go install github.com/sigstore/cosign/cmd/cosign@v1.10.0
-    go install github.com/gohugoio/hugo@v0.97.3+extended
-    go install golang.org/x/vuln/cmd/govulncheck@v0.0.0-20220902211423-27dd78d2ca39
+    go install github.com/mikefarah/yq/v4@v4.28.1
+    go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.11.0
+    go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.0.0-20221007015352-8ad090e0663e
+    go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.10.0
+    go install github.com/sigstore/cosign/cmd/cosign@v1.13.0
+    go install github.com/gohugoio/hugo@v0.104.3+extended
+    go install golang.org/x/vuln/cmd/govulncheck@v0.0.0-20221010225617-fdec20da070d
 
     if ! echo "$PATH" | grep -q "${GOPATH:-undefined}/bin\|$HOME/go/bin"; then
         echo "Go workspace's \"bin\" directory is not in PATH. Run 'export PATH=\"\$PATH:\${GOPATH:-\$HOME/go}/bin\"'."
