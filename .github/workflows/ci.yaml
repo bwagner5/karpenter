@@ -12,6 +12,7 @@ jobs:
           k8sVersion: ["1.20.x", "1.21.x", "1.22.x", "1.23.x", "1.24.x"]
     env:
       K8S_VERSION: ${{ matrix.k8sVersion }}
+      PR_TITLE: "${{ github.event.pull_request.title }}"
     steps:
     - uses: actions/checkout@v3
     - run: sed -En 's/^go[[:space:]]+([[:digit:].]+)$/GO_VERSION=\1/p' go.mod >> $GITHUB_ENV
@@ -29,7 +30,6 @@ jobs:
         key: ${{ runner.os }}-go-cache-${{ hashFiles('**/go.sum') }}
     - name: CI - Verifications and Tests
       run: |
-        export PR_TITLE=${{ github.event.pull_request.title }}
         make ci
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

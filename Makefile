@@ -74,6 +74,7 @@ verify: tidy download codegen ## Verify code. Includes dependencies, linting, fo
 		if [ $(MAKECMDGOALS) = 'ci' ]; then\
 			exit 1;\
 		fi;}
+	@hack/check-for-upgrade-notes.sh
 	@echo "Validating codegen/docgen build scripts..."
 	@find hack/code hack/docs -name "*.go" -type f -exec go build -o /dev/null {} \;
 	@govulncheck ./pkg/...
