@@ -186,6 +186,14 @@ func handleVariableDeclaration(v *ast.GenDecl) []metricInfo {
 					} else {
 						log.Fatalf("unsupported selector %s", selector)
 					}
+				case *ast.Ident:
+					if val.Name == "Namespace" {
+						value = "karpenter"
+					} else if val.Name == "nodeSubsystem" {
+						value = "nodes"
+					} else {
+						log.Fatalf("unsupported identifier: %v", kv.Value)
+					}
 				default:
 					log.Fatalf("unsupported value %T %v", kv.Value, kv.Value)
 				}
