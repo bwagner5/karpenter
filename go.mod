@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/imdario/mergo v0.3.13
 	github.com/mitchellh/hashstructure/v2 v2.0.2
-	github.com/onsi/ginkgo/v2 v2.4.0
+	github.com/onsi/ginkgo/v2 v2.5.1
 	github.com/onsi/gomega v1.24.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml/v2 v2.0.5
@@ -86,7 +86,7 @@ require (
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
