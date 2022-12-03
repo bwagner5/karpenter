@@ -99,6 +99,7 @@ Take care to ensure the label domains are correct. A well known label like `karp
 | karpenter.k8s.aws/instance-gpu-count        | 1           | [AWS Specific] Number of GPUs on the instance                                                                                               |
 | karpenter.k8s.aws/instance-gpu-memory       | 16384       | [AWS Specific] Number of mebibytes of memory on the GPU                                                                                     |
 | karpenter.k8s.aws/instance-local-nvme       | 900         | [AWS Specific] Number of gibibytes of local nvme storage on the instance                                                                    |
+| karpenter.k8s.aws/instance-ipv6             | supported   | [AWS Specific] Instance types that support IPv6                                                                     |
 
 ### Node selectors
 

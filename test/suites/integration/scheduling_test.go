@@ -85,6 +85,7 @@ var _ = Describe("Scheduling", func() {
 			v1alpha1.LabelInstanceGPUCount:        "1",
 			v1alpha1.LabelInstanceGPUMemory:       "16384",
 			v1alpha1.LabelInstanceLocalNVME:       "900",
+			v1alpha1.LabelInstanceIPv6:            "supported",
 			// Deprecated Labels
 			v1.LabelFailureDomainBetaZone:   fmt.Sprintf("%sa", env.Region),
 			v1.LabelFailureDomainBetaRegion: env.Region,

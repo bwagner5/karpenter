@@ -59,6 +59,7 @@ var _ = Describe("Instance Types", func() {
 			v1alpha1.LabelInstanceGPUCount:        "1",
 			v1alpha1.LabelInstanceGPUMemory:       "16384",
 			v1alpha1.LabelInstanceLocalNVME:       "900",
+			v1alpha1.LabelInstanceIPv6:            "supported",
 		} {
 			pods = append(pods, coretest.UnschedulablePod(coretest.PodOptions{NodeSelector: map[string]string{key: value}}))
 		}
