@@ -1,0 +1,32 @@
+name: "karpenter"
+compatibility:
+  - appVersion: v0.29.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.27
+  - appVersion: v0.28.1
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.27
+  - appVersion: v0.28.0
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.27.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.26.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.25.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.24.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.23.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.22.x
+    minK8sVersion: 1.21
+    maxK8sVersion: 1.25
+  - appVersion: v0.21.x
+    minK8sVersion: 1.20
+    maxK8sVersion: 1.24
