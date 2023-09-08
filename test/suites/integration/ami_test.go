@@ -366,7 +366,13 @@ var _ = Describe("AMI", func() {
 				Requirements: []v1.NodeSelectorRequirement{
 					{
 						Key:      v1alpha1.LabelInstanceCategory,
-						Operator: v1.NodeSelectorOpExists,
+						Operator: v1.NodeSelectorOpIn,
+						Values:   []string{"c", "m", "r"},
+					},
+					{
+						Key:      v1alpha1.LabelInstanceGeneration,
+						Operator: v1.NodeSelectorOpGt,
+						Values:   []string{"2"},
 					},
 					{
 						Key:      v1.LabelOSStable,
